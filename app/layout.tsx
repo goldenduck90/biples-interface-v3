@@ -1,13 +1,14 @@
-import "./globals.css";
+import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata } from "next";
 import { Open_Sans, Roboto } from "next/font/google";
+import "./globals.css";
 
-import { cn } from "@/lib/utils";
-import { ThemeProvider } from "@/components/providers/theme-provider";
 import { ModalProvider } from "@/components/providers/modal-provider";
-import { SocketProvider } from "@/components/providers/socket-provider";
 import { QueryProvider } from "@/components/providers/query-provider";
+import { SocketProvider } from "@/components/providers/socket-provider";
+import { ThemeProvider } from "@/components/providers/theme-provider";
 import { ContextProvider } from "@/contexts/ContextProvider";
+import { cn } from "@/lib/utils";
 
 const font = Roboto({
   subsets: ["latin"],
@@ -25,22 +26,27 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={cn(font.className, "bg-gradient")}>
-        <ContextProvider>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="dark"
-            enableSystem={false}
-            storageKey="discord-theme"
-          >
-            <SocketProvider>
-              <ModalProvider />
-              <QueryProvider>{children}</QueryProvider>
-            </SocketProvider>
-          </ThemeProvider>
-        </ContextProvider>
-      </body>
-    </html>
+    
+      <html lang="en" suppressHydrationWarning>
+        <body
+          className={cn(
+            "bg-white dark:bg-[#151515] w-screen overflow-x-hidden"
+          )}
+        >
+          <ContextProvider>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="dark"
+              enableSystem={false}
+              storageKey="discord-theme"
+            >
+              <SocketProvider>
+                <ModalProvider />
+                <QueryProvider>{children}</QueryProvider>
+              </SocketProvider>
+            </ThemeProvider>
+          </ContextProvider>
+        </body>
+      </html>
   );
 }
