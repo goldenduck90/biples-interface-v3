@@ -1,7 +1,6 @@
 import "./globals.css";
 import type { Metadata } from "next";
-import { Open_Sans } from "next/font/google";
-import { ClerkProvider } from "@clerk/nextjs";
+import { Open_Sans, Roboto } from "next/font/google";
 
 import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/components/providers/theme-provider";
@@ -10,7 +9,10 @@ import { SocketProvider } from "@/components/providers/socket-provider";
 import { QueryProvider } from "@/components/providers/query-provider";
 import { ContextProvider } from "@/contexts/ContextProvider";
 
-const font = Open_Sans({ subsets: ["latin"] });
+const font = Roboto({
+  subsets: ["latin"],
+  weight: ["100", "300", "400", "500", "700", "900"],
+});
 
 export const metadata: Metadata = {
   title: "Team Chat Application",
@@ -23,24 +25,22 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <ClerkProvider>
-      <html lang="en" suppressHydrationWarning>
-        <body className={cn(font.className, "bg-white dark:bg-[#313338]")}>
-          <ContextProvider>
-            <ThemeProvider
-              attribute="class"
-              defaultTheme="dark"
-              enableSystem={false}
-              storageKey="discord-theme"
-            >
-              <SocketProvider>
-                <ModalProvider />
-                <QueryProvider>{children}</QueryProvider>
-              </SocketProvider>
-            </ThemeProvider>
-          </ContextProvider>
-        </body>
-      </html>
-    </ClerkProvider>
+    <html lang="en" suppressHydrationWarning>
+      <body className={cn(font.className, "bg-gradient")}>
+        <ContextProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="dark"
+            enableSystem={false}
+            storageKey="discord-theme"
+          >
+            <SocketProvider>
+              <ModalProvider />
+              <QueryProvider>{children}</QueryProvider>
+            </SocketProvider>
+          </ThemeProvider>
+        </ContextProvider>
+      </body>
+    </html>
   );
 }

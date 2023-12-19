@@ -1,4 +1,4 @@
-import { redirectToSignIn } from "@clerk/nextjs";
+
 import { redirect } from "next/navigation";
 
 import { db } from "@/lib/db";
@@ -26,7 +26,7 @@ const MemberIdPage = async ({
   const profile = await currentProfile();
 
   if (!profile) {
-    return redirectToSignIn();
+    return null;
   }
 
   const currentMember = await db.member.findFirst({
