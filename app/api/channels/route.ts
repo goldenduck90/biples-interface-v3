@@ -18,6 +18,8 @@ export async function POST(
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
+
+    
     if (!serverId) {
       return new NextResponse("Server ID missing", { status: 400 });
     }

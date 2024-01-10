@@ -10,6 +10,9 @@ import { ThemeProvider } from "@/components/providers/theme-provider";
 import { ContextProvider } from "@/contexts/ContextProvider";
 import { cn } from "@/lib/utils";
 
+import { SessionProvider } from "next-auth/react";
+import { NextAuthProvider } from "./providers";
+
 const font = Roboto({
   subsets: ["latin"],
   weight: ["100", "300", "400", "500", "700", "900"],
@@ -26,13 +29,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    
-      <html lang="en" suppressHydrationWarning>
-        <body
-          className={cn(
-            "bg-white dark:bg-[#151515] w-screen overflow-x-hidden"
-          )}
-        >
+    <html lang="en" suppressHydrationWarning>
+      <body className={cn("bg-gradient w-screen overflow-x-hidden")}>
+        <NextAuthProvider>
           <ContextProvider>
             <ThemeProvider
               attribute="class"
@@ -42,11 +41,12 @@ export default function RootLayout({
             >
               <SocketProvider>
                 <ModalProvider />
-                <QueryProvider>{children}</QueryProvider>
+                <QueryProvider> {children}</QueryProvider>
               </SocketProvider>
             </ThemeProvider>
           </ContextProvider>
-        </body>
-      </html>
+        </NextAuthProvider>
+      </body>
+    </html>
   );
 }

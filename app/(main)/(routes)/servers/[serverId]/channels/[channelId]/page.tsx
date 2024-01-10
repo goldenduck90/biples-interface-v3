@@ -1,6 +1,5 @@
-
 import { redirect } from "next/navigation";
-import { ChannelType } from "@prisma/client";
+import { ChannelType, MemberRole } from "@prisma/client";
 
 import { ChatHeader } from "@/components/chat/chat-header";
 import { ChatInput } from "@/components/chat/chat-input";
@@ -20,7 +19,7 @@ const ChannelIdPage = async ({ params }: ChannelIdPageProps) => {
   const profile = await currentProfile();
 
   if (!profile) {
-    return null;
+    return redirect("/sign-in");
   }
 
   const channel = await db.channel.findUnique({
@@ -39,6 +38,14 @@ const ChannelIdPage = async ({ params }: ChannelIdPageProps) => {
   if (!channel || !member) {
     redirect("/");
   }
+
+  const isAdmin = member.role === MemberRole.ADMIN;
+  const isModerator = member.role === MemberRole.MODERATOR;
+  const isOwner = member.id === member.id;
+
+  const handleNewMessage = (newMessage: any) => {
+    console.log(newMessage);
+  };
 
   return (
     <div className="bg-white dark:bg-white/5 flex flex-col h-full rounded-[25px]">
@@ -63,15 +70,32 @@ const ChannelIdPage = async ({ params }: ChannelIdPageProps) => {
             paramKey="channelId"
             paramValue={channel.id}
           />
-          <ChatInput
-            name={channel.name}
-            type="channel"
-            apiUrl="/api/socket/messages"
-            query={{
-              channelId: channel.id,
-              serverId: channel.serverId,
-            }}
-          />
+          {channel.name === "Announcements" && isAdmin && (
+            <>
+              <ChatInput
+                name={channel.name}
+                type="channel"
+                apiUrl="/api/socket/messages"
+                query={{
+                  channelId: channel.id,
+                  serverId: channel.serverId,
+                }}
+              />
+            </>
+          )}
+          {channel.name !== "Announcements" && (
+            <>
+              <ChatInput
+                name={channel.name}
+                type="channel"
+                apiUrl="/api/socket/messages"
+                query={{
+                  channelId: channel.id,
+                  serverId: channel.serverId,
+                }}
+              />
+            </>
+          )}
         </>
       )}
       {channel.type === ChannelType.AUDIO && (

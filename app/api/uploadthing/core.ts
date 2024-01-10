@@ -1,9 +1,16 @@
+import { authOptions } from "@/lib/auth";
+import { getServerSession } from "next-auth";
 import { createUploadthing, type FileRouter } from "uploadthing/next";
 
 const f = createUploadthing();
 
-const handleAuth = () => {
-  const walletId = "41ifa2Pwc4Ur6nii6yythZhxg2mjDrkzKsrbTUKJ5yBB";
+const handleAuth = async () => {
+  const session = await getServerSession(authOptions);
+
+  //@ts-ignore
+  console.log("session", session?.user.walletId);
+  //@ts-ignore
+  const walletId = session?.user.walletId;
 
   if (!walletId) throw new Error("Unauthorized");
   return { userId: walletId };

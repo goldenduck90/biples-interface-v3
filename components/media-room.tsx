@@ -6,6 +6,9 @@ import "@livekit/components-styles";
 import { Channel } from "@prisma/client";
 
 import { Loader2 } from "lucide-react";
+import { useSession } from "next-auth/react";
+import { redirect } from "next/navigation";
+import { CustomVideoConference } from "./custom-videoconference";
 
 interface MediaRoomProps {
   chatId: string;
@@ -14,14 +17,22 @@ interface MediaRoomProps {
 }
 
 export const MediaRoom = ({ chatId, video, audio }: MediaRoomProps) => {
-  const walletId = "41ifa2Pwc4Ur6nii6yythZhxg2mjDrkzKsrbTUKJ5yBB";
+  const { data: session } = useSession();
+  const user = session?.user;
+
+  if (!user) {
+    redirect("/sign-in");
+  }
+
+  //@ts-ignore
+  const username = user.username;
 
   const [token, setToken] = useState("");
 
   useEffect(() => {
-    if (!walletId) return;
+    if (!username) return;
 
-    const name = `${walletId}`;
+    const name = `${username}`;
 
     (async () => {
       try {
@@ -34,7 +45,7 @@ export const MediaRoom = ({ chatId, video, audio }: MediaRoomProps) => {
         console.log(e);
       }
     })();
-  }, [walletId, chatId]);
+  }, [username, chatId]);
 
   if (token === "") {
     return (
@@ -54,7 +65,7 @@ export const MediaRoom = ({ chatId, video, audio }: MediaRoomProps) => {
       video={video}
       audio={audio}
     >
-      <VideoConference />
+      <CustomVideoConference />
     </LiveKitRoom>
   );
 };

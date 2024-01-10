@@ -57,6 +57,8 @@ export const CreateServerModal = () => {
     try {
       await axios.post("/api/servers", values);
 
+
+      
       form.reset();
       router.refresh();
       onClose();
@@ -72,9 +74,9 @@ export const CreateServerModal = () => {
 
   return (
     <Dialog open={isModalOpen} onOpenChange={handleClose}>
-      <DialogContent className="backdrop-blur-[130px] !w-auto !rounded-[28px] border border-white text-white p-[20px_35px] sm:p-[30px_60px] overflow-hidden">
-        {/* <DialogHeader className="pt-8 px-6">
-          <DialogTitle className="text-2xl text-center font-bold">
+    <DialogContent className="overflow-hidden bg-gradient-to-tr rounded-2xl from-[#2e272c] to-[#151415]">
+        {/* <DialogHeader className="px-6 pt-8">
+          <DialogTitle className="text-2xl font-bold text-center">
             Customize your server
           </DialogTitle>
           <DialogDescription className="text-center text-zinc-500">
@@ -100,7 +102,7 @@ export const CreateServerModal = () => {
                 )}
               />
             </div>
-            <div className="flex flex-col gap-2 w-full ">
+            <div className="flex flex-col w-full gap-2 ">
               <FormField
                 control={form.control}
                 name="name"
@@ -119,7 +121,7 @@ export const CreateServerModal = () => {
                 )}
               />
 
-              <div className="flex flex-col gap-1 w-full">
+              <div className="flex flex-col w-full gap-1">
                 <Button
                   className="rounded-lg mx-auto hover:bg-[#40CACA] h-[50px] min-w-[300px] bg-[#50FFFF] text-black"
                   disabled={isLoading}
@@ -127,7 +129,7 @@ export const CreateServerModal = () => {
                   {isLoading && (
                     <Icon
                       icon="line-md:loading-twotone-loop"
-                      className="h-5 w-5 mr-3"
+                      className="w-5 h-5 mr-3"
                     />
                   )}
                   <span>Create</span>

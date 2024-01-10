@@ -7,6 +7,7 @@ import { UploadDropzone } from "@/lib/uploadthing";
 
 import { Icon } from "@iconify/react";
 import "@uploadthing/react/styles.css";
+import { FaCamera } from "react-icons/fa6";
 
 interface FileUploadProps {
   onChange: (url?: string) => void;
@@ -19,14 +20,14 @@ export const FileUpload = ({ onChange, value, endpoint }: FileUploadProps) => {
 
   if (value && fileType !== "pdf") {
     return (
-      <div className="relative h-28 w-28 border border-transparent">
+      <div className="relative border border-transparent h-28 w-28">
         <Image fill src={value} alt="Upload" className="rounded-full" />
         <button
           onClick={() => onChange("")}
-          className="bg-rose-500 text-white p-1 rounded-full absolute top-0 right-0 shadow-sm"
+          className="absolute top-0 right-0 p-1 text-white rounded-full shadow-sm bg-rose-500"
           type="button"
         >
-          <X className="h-4 w-4" />
+          <X className="w-4 h-4" />
         </button>
       </div>
     );
@@ -34,8 +35,8 @@ export const FileUpload = ({ onChange, value, endpoint }: FileUploadProps) => {
 
   if (value && fileType === "pdf") {
     return (
-      <div className="relative flex h-28 w-28 items-center p-2 mt-2 rounded-md bg-background/10">
-        <FileIcon className="h-10 w-10 fill-indigo-200 stroke-indigo-400" />
+      <div className="relative flex items-center p-2 mt-2 rounded-md h-28 w-28 bg-background/10">
+        <FileIcon className="w-10 h-10 fill-indigo-200 stroke-indigo-400" />
         <a
           href={value}
           target="_blank"
@@ -46,10 +47,10 @@ export const FileUpload = ({ onChange, value, endpoint }: FileUploadProps) => {
         </a>
         <button
           onClick={() => onChange("")}
-          className="bg-rose-500 text-white p-1 rounded-full absolute -top-2 -right-2 shadow-sm"
+          className="absolute p-1 text-white rounded-full shadow-sm bg-rose-500 -top-2 -right-2"
           type="button"
         >
-          <X className="h-4 w-4" />
+          <X className="w-4 h-4" />
         </button>
       </div>
     );
@@ -67,32 +68,27 @@ export const FileUpload = ({ onChange, value, endpoint }: FileUploadProps) => {
         uploadIcon({ ready, isUploading }) {
           if (ready || !ready)
             return (
-              <Icon
-                icon="solar:upload-minimalistic-bold-duotone"
-                className="h-8 w-8 text-foreground"
-              />
+              <div className="absolute bottom-0 flex items-center justify-center w-full p-4 text-white bg-black">
+                <FaCamera />
+              </div>
             );
 
-          if (isUploading) return <div className="sr-only hidden"></div>;
+          if (isUploading) return <div className="hidden sr-only"></div>;
           return;
         },
         label({ ready, isUploading }) {
-          if (ready || !ready)
-            return (
-              <span className="text-xs font-light mt-[0.1rem] hover:text-[#50FFFF] text-[#40CACA]">
-                Drag & Drop or <br /> Choose File
-              </span>
-            );
-          if (isUploading) return <div className="sr-only hidden"></div>;
+          if (ready || !ready) return <div></div>;
+          if (isUploading) return <div className="hidden sr-only"></div>;
           return;
         },
-        button({ ready }) {
-          if (ready) return <div className="text-xs ">Continue</div>;
-        },
       }}
-      className="cursor-pointer py-0 focus:ring-0 h-28 w-28 border border-foreground rounded-full overflow-hidden"
+      className="cursor-pointer relative py-0 focus:ring-0 h-28 w-28 border-2 border-[#53ACFF] rounded-full overflow-hidden"
       onClientUploadComplete={(res) => {
         onChange(res?.[0].url);
+      }}
+      onUploadBegin={(name) => {
+        // Do something once upload begins
+        console.log("Uploading: ", name);
       }}
       onUploadError={(error: Error) => {
         console.log(error);

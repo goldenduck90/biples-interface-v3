@@ -7,17 +7,22 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { FiPlusCircle } from "react-icons/fi";
+import { IoSend } from "react-icons/io5";
+import { ImSpinner11 } from "react-icons/im";
+import { Member, Message, Profile } from "@prisma/client";
 
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-} from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useModal } from "@/hooks/use-modal-store";
 import { EmojiPicker } from "@/components/emoji-picker";
+import { currentProfile } from "@/lib/current-profile";
 
+type MessageWithMemberWithProfile = Message & {
+  member: Member & {
+    profile: Profile;
+  };
+};
 interface ChatInputProps {
   apiUrl: string;
   query: Record<string, any>;
@@ -29,12 +34,7 @@ const formSchema = z.object({
   content: z.string().min(1),
 });
 
-export const ChatInput = ({
-  apiUrl,
-  query,
-  name,
-  type,
-}: ChatInputProps) => {
+export const ChatInput = ({ apiUrl, query, name, type }: ChatInputProps) => {
   const { onOpen } = useModal();
   const router = useRouter();
 
@@ -42,10 +42,12 @@ export const ChatInput = ({
     resolver: zodResolver(formSchema),
     defaultValues: {
       content: "",
-    }
+    },
   });
 
   const isLoading = form.formState.isSubmitting;
+
+  const content = form.watch("content");
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
@@ -61,7 +63,7 @@ export const ChatInput = ({
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 
   return (
     <Form {...form}>
@@ -76,21 +78,46 @@ export const ChatInput = ({
                   <button
                     type="button"
                     onClick={() => onOpen("messageFile", { apiUrl, query })}
-                    className="absolute top-7 left-8 h-[24px] w-[24px] bg-zinc-500 dark:bg-zinc-400 hover:bg-zinc-600 dark:hover:bg-zinc-300 transition rounded-full p-1 flex items-center justify-center"
+                    className="absolute  top-[22px] cursor-pointer hover:opacity-80 left-6 h-[40px] w-[40px] transition rounded-full p-1 flex items-center justify-center"
                   >
-                    <Plus className="text-white dark:text-[#313338]" />
+                    <FiPlusCircle size={"24"} />
                   </button>
                   <Input
                     disabled={isLoading}
-                    className="px-14 py-6 bg-zinc-200/90 dark:bg-zinc-700/75 border-none border-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-zinc-600 dark:text-zinc-200"
-                    placeholder={`Message ${type === "conversation" ? name : "#" + name}`}
+                    className="py-6 rounded-xl bg-transparent border-2 border-[#283643] px-14 focus-visible:ring-0 focus-visible:ring-offset-0 text-white placeholder:text-white/20"
+                    placeholder={`Write a message...`}
                     {...field}
                   />
-                  <div className="absolute top-7 right-8">
+                  <div className="absolute flex items-center gap-5 top-7 right-8">
                     <EmojiPicker
-                      onChange={(emoji: string) => field.onChange(`${field.value} ${emoji}`)}
+                      onChange={(emoji: string) =>
+                        field.onChange(`${field.value} ${emoji}`)
+                      }
                     />
+                    {isLoading ? (
+                      <>
+                        <div className="transition delay-75 cursor-not-allowed animate-pulse text-white/70">
+                          <IoSend size="24" />
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        {content && content.trim() !== "" ? (
+                          <div
+                            onClick={form.handleSubmit(onSubmit)}
+                            className="transition delay-75 cursor-pointer hover:opacity-80 "
+                          >
+                            <IoSend size="24" />
+                          </div>
+                        ) : (
+                          <div className="transition delay-75 cursor-not-allowed text-white/10">
+                            <IoSend size="24" />
+                          </div>
+                        )}
+                      </>
+                    )}
                   </div>
+                  <div></div>
                 </div>
               </FormControl>
             </FormItem>
@@ -98,5 +125,5 @@ export const ChatInput = ({
         />
       </form>
     </Form>
-  )
-}
+  );
+};

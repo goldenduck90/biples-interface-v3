@@ -1,9 +1,17 @@
-
-
 import { db } from "@/lib/db";
+import { authOptions } from "./auth";
+import { getServerSession } from "next-auth";
+import { redirect } from "next/navigation";
 
 export const initialProfile = async () => {
-  const walletId = "41ifa2Pwc4Ur6nii6yythZhxg2mjDrkzKsrbTUKJ5yBB";
+  const session = await getServerSession(authOptions);
+
+  if (!session) {
+    return redirect("/sign-in");
+  }
+
+  //@ts-ignore
+  const walletId = session?.user.walletId;
 
   const profile = await db.profile.findUnique({
     where: {
@@ -18,8 +26,8 @@ export const initialProfile = async () => {
   const newProfile = await db.profile.create({
     data: {
       userId: walletId,
-      name: "John Doe",
-      imageUrl: "https://i.pravatar.cc/300",
+      name: session?.user!.username!,
+      imageUrl: "https://i.ibb.co/1dMWvKX/pfp.png",
       email: "test@test.com",
     },
   });
